@@ -11,14 +11,11 @@ import javax.annotation.PostConstruct;
 public class GameService implements GameRepository {
     private static final String TABLE_NAME = "Games";
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    private HashOperations<String, Long, Game> hashOperations;
-
     @Autowired
-    public GameService(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    private RedisTemplate redisTemplate;
+
+    private HashOperations<String, String, Game> hashOperations;
+
 
     @PostConstruct
     private void initializeHashOperations() {

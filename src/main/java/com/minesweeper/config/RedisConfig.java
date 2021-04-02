@@ -7,6 +7,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
@@ -16,10 +17,11 @@ import java.net.URISyntaxException;
 
 @Profile("heroku")
 @Configuration
+@EnableRedisRepositories
 public class RedisConfig {
 
     @Bean
-    JedisPoolConfig jedisPoolConfig() {
+    public JedisPoolConfig jedisPoolConfig() {
 
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxTotal(10);
@@ -33,7 +35,7 @@ public class RedisConfig {
     }
 
     @Bean
-    JedisConnectionFactory jedisConnectionFactory(JedisPoolConfig jedisPoolConfig) throws URISyntaxException {
+    public JedisConnectionFactory jedisConnectionFactory(JedisPoolConfig jedisPoolConfig) throws URISyntaxException {
         String envRedisUrl = System.getenv("REDIS_URL");
 
         URI redisUri = new URI(envRedisUrl);
@@ -52,7 +54,7 @@ public class RedisConfig {
         return new JedisConnectionFactory(hostConfig, clientConfig);
     }
 
-    @Bean
+    @Bean("redisTemplate")
     public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);

@@ -12,21 +12,18 @@ import java.text.SimpleDateFormat;
 public class UserService implements UserRepository {
     private static final String TABLE_NAME = "Users";
 
-    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    private HashOperations<String, String, User> hashOperations;
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 
     @Autowired
-    public UserService(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    private RedisTemplate redisTemplate;
+
+    private HashOperations<String, String, User> hashOperations;
 
     @PostConstruct
     private void initializeHashOperations() {
         hashOperations = redisTemplate.opsForHash();
     }
+
 
     @Override
     public User createUser(User user) {
