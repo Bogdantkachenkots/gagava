@@ -13,6 +13,9 @@ public class UserController {
 
     @PostMapping("/users")
     public void createUser(@RequestBody User user) {
+        if (user == null || user.getUsername().isEmpty()) {
+
+        }
         // TODO User creation
     }
 
