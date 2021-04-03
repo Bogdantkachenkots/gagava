@@ -1,36 +1,99 @@
 package com.minesweeper.game;
 
+import com.minesweeper.exceptions.KaboomException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.Duration;
-import java.util.Date;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Random;
 
 @RedisHash("game")
+@Schema(name = "Game", description = "Game model")
 public class Game implements Serializable {
+
     @Id
-    public String name;
+    @Schema(description = "Unique identifier of the game")
+    private String name;
 
-    public int rows;
+    @Schema(description = "Quantity of board's rows")
+    private int rows;
 
-    public int columns;
+    @Schema(description = "Quantity of board's columns")
+    private int columns;
 
-    public int mines;
+    @Schema(description = "Quantity of board's mines")
+    private int mines;
 
-    public String status;
+    @Schema(description = "Game's status")
+    private String status;
 
-    public Cell[] grid;
+    @Schema(description = "Game's board")
+    private Cell[][] grid;
 
-    public int clicks;
+    @Schema(description = "Click counter")
+    private int clicks;
 
-    public String username;
+    @Schema(description = "Username of the game")
+    @NotBlank(message = "username is mandatory")
+    private String username;
 
-    public Date createdAt;
+    @Schema(description = "Date of game creation")
+    private Calendar createdAt;
 
-    public Date startedAt;
+    @Schema(description = "Date the game started")
+    private Calendar startedAt;
 
-    public Duration timeSpent;
+    @Schema(description = "Time spent in the game")
+    private Duration timeSpent;
+
+    public void buildBoard() {
+        int cellsNumber = columns * rows;
+        Cell[] cells = new Cell[cellsNumber];
+
+        for (int i = 0; i < mines; i++) {
+            int randomMineIndex = new Random(cellsNumber).nextInt();
+            if (!cells[randomMineIndex].isMine()) {
+                cells[randomMineIndex].setMine(true);
+            }
+        }
+
+        grid = new Cell[rows][];
+        for (int row = 0; row < grid.length; row++) {
+            grid[row] = Arrays.copyOfRange(cells, (columns * row), columns * (row + 1));
+        }
+    }
+
+    public void clickCell(int column, int row) throws KaboomException {
+        if (alreadyClickedCell(column, row)) {
+            throw new UnsupportedOperationException("cell already clicked");
+        }
+
+        revealCell(column, row);
+
+    }
+
+    private void revealCell(int column, int row) throws KaboomException {
+        grid[column][row].setClicked(true);
+        if (grid[column][row].isMine()) {
+            status = Status.LOST.getValue();
+            throw new KaboomException("Boom!");
+        }
+
+        // TODO recursive call to check for adjacent cells
+    }
+
+    public void flagOrMarkCell(int column, int row, String clickType) {
+        // TODO flag or mark with question mark the clicked cell
+    }
+
+    private boolean alreadyClickedCell(int column, int row) {
+        return grid[column][row].isClicked();
+    }
 
     public String getName() {
         return name;
@@ -72,11 +135,11 @@ public class Game implements Serializable {
         this.status = status;
     }
 
-    public Cell[] getGrid() {
+    public Cell[][] getGrid() {
         return grid;
     }
 
-    public void setGrid(Cell[] grid) {
+    public void setGrid(Cell[][] grid) {
         this.grid = grid;
     }
 
@@ -96,19 +159,19 @@ public class Game implements Serializable {
         this.username = username;
     }
 
-    public Date getCreatedAt() {
+    public Calendar getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Calendar createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getStartedAt() {
+    public Calendar getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(Date startedAt) {
+    public void setStartedAt(Calendar startedAt) {
         this.startedAt = startedAt;
     }
 
@@ -119,4 +182,6 @@ public class Game implements Serializable {
     public void setTimeSpent(Duration timeSpent) {
         this.timeSpent = timeSpent;
     }
+
+
 }

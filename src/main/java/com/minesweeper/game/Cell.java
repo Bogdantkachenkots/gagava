@@ -1,9 +1,23 @@
 package com.minesweeper.game;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(name = "Cell", description = "Cell model")
 public class Cell {
-    public boolean mine;
-    public boolean clicked;
-    public String coordinates;
+    @Schema(description = "Flag to determinate if this cell has a mine on it")
+    private boolean mine;
+
+    @Schema(description = "Flag to determinate if this cell has been clicked")
+    private boolean clicked;
+
+    @Schema(description = "Flag to determinate if this cell has been flagged")
+    private boolean flagged;
+
+    @Schema(description = "Flag to determinate if this cell has been mark with question mark")
+    private boolean marked;
+
+    @Schema(description = "A string representation of the cell coordinates")
+    private String coordinates;
 
     public boolean isMine() {
         return mine;
@@ -27,5 +41,21 @@ public class Cell {
 
     public void setCoordinates(String coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public boolean isFlagged() {
+        return flagged;
+    }
+
+    public void setFlagged(boolean flagged) {
+        this.flagged = flagged;
+    }
+
+    public boolean isMarked() {
+        return marked;
+    }
+
+    public void setMarked(boolean marked) {
+        this.marked = marked;
     }
 }

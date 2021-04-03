@@ -1,5 +1,6 @@
 package com.minesweeper.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -7,6 +8,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 @RedisHash("user")
+@Schema(name = "User", description = "User model")
 public class User implements Serializable {
 
     @Id
