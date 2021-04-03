@@ -3,11 +3,12 @@ package com.minesweeper.game;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.Date;
 
 @RedisHash("game")
-public class Game {
+public class Game implements Serializable {
     @Id
     public String name;
 

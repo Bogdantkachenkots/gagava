@@ -3,10 +3,11 @@ package com.minesweeper.user;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 @RedisHash("user")
-public class User {
+public class User implements Serializable {
 
     @Id
     private String username;
